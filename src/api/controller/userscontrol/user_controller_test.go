@@ -1,6 +1,7 @@
 package userscontrol
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -39,38 +40,58 @@ func setupApp() *fiber.App {
 func TestUserCreate(t *testing.T) {
 	app := setupApp()
 
-	bodyRequest := `{
-		"name": "John Doe",
-		"email": "gabriel@lamberto2.com",
-		"password": "password"
-	}`
-	req := httptest.NewRequest(http.MethodPost, CREATE_USER_ENDPOINT, strings.NewReader(bodyRequest))
-
-	resp, err := app.Test(req, -1)
-	assert.NoError(t, err)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer resp.Body.Close()
-
-	bodyResponse, err := io.ReadAll(resp.Body)
-	assert.NoError(t, err)
-	if err != nil {
-		t.Fatal(err)
+	tests := []struct {
+		name               string
+		email              string
+		statusCodeExpected int
+	}{
+		{"John Doe", "john0@doe.com", 201},
+		{"John", "john1@doe.com", 201},
+		// TODO - Implement the logic that will assert the success json in the correct case (new type for each case??)
+		// {"Jo", "john2@doe.com", 400},
+		// {"John Doe", "john3", 400},
+		// {"", "", 400},
 	}
 
-	assert.Equal(t, fiber.StatusCreated, resp.StatusCode)
-	assert.JSONEq(
-		t,
-		string(bodyResponse),
-		`{
-    		"message": "User created successfully",
-    		"status": "success",
-    		"data": {
-        		"name": "John Doe",
-        		"email": "gabriel@lamberto2.com",
-        		"role": "user"
-    		}
-		}`,
-	)
+	for _, tc := range tests {
+		bodyRequest := fmt.Sprintf(
+			`{
+				"name": "%s",
+				"email": "%s",
+				"password": "example"
+			}`, tc.name, tc.email,
+		)
+		req := httptest.NewRequest(http.MethodPost, CREATE_USER_ENDPOINT, strings.NewReader(bodyRequest))
+
+		resp, err := app.Test(req, -1)
+		assert.NoError(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer resp.Body.Close()
+
+		bodyResponse, err := io.ReadAll(resp.Body)
+		assert.NoError(t, err)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, tc.statusCodeExpected, resp.StatusCode)
+		assert.JSONEq(
+			t,
+			string(bodyResponse),
+			fmt.Sprintf(
+				`{
+					"message": "User created successfully",
+					"status": "success",
+					"data": {
+						"name": "%s",
+						"email": "%s",
+						"role": "user"
+					}
+				}`, tc.name, tc.email,
+			),
+		)
+	}
+
 }
