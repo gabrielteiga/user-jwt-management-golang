@@ -2,8 +2,9 @@ package userrepository
 
 import (
 	"database/sql"
+	"log"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gabrielteiga/user-management-jwt/src/domain/entities"
 )
 
 type UserRepository struct {
@@ -16,7 +17,14 @@ func NewUserRepositorySQL(sql *sql.DB) *UserRepository {
 	}
 }
 
-func (ur *UserRepository) Create(c *fiber.Ctx) error {
-	// TODO - Implement the functionality to create user in users table
-	return c.SendString("OI MUNDO")
+func (ur *UserRepository) Create(user *entities.User) error {
+	sql := "INSERT INTO users (name, email, password) VALUES (?, ?, ?)"
+
+	_, err := ur.sql.Exec(sql, user.Name, user.Email, user.Password)
+	if err != nil {
+		log.Printf("Error creating user: %v", err)
+		return err
+	}
+
+	return nil
 }

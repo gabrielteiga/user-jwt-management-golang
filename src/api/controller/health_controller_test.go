@@ -10,12 +10,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var healthEndpoint = "/api/v1/health"
+const HEALTH_ENDPOINT = "/api/v1/health"
 
 func setupApp() *fiber.App {
 	app := fiber.New()
 
-	app.Get(healthEndpoint, Health)
+	app.Get(HEALTH_ENDPOINT, Health)
 
 	return app
 }
@@ -23,7 +23,7 @@ func setupApp() *fiber.App {
 func TestHealthIntegration(t *testing.T) {
 	app := setupApp()
 
-	req := httptest.NewRequest(http.MethodGet, healthEndpoint, nil)
+	req := httptest.NewRequest(http.MethodGet, HEALTH_ENDPOINT, nil)
 
 	resp, err := app.Test(req, -1)
 	assert.NoError(t, err)

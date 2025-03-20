@@ -8,49 +8,17 @@ const (
 )
 
 type User struct {
-	name     string
-	email    string
-	password string
-	role     UserRole
+	Name     string   `json:"name"`
+	Email    string   `json:"email"`
+	Password string   `json:"password,omitempty"`
+	Role     UserRole `json:"role,omitempty"`
 }
 
 func NewUser(name, email, password string, role UserRole) *User {
 	return &User{
-		name:     name,
-		email:    email,
-		password: password,
-		role:     role,
+		Name:     name,
+		Email:    email,
+		Password: password,
+		Role:     role,
 	}
-}
-
-func (u *User) GetName() string {
-	return u.name
-}
-
-func (u *User) GetEmail() string {
-	return u.email
-}
-
-func (u *User) GetPassword() string {
-	return u.password
-}
-
-func (u *User) GetRole() UserRole {
-	return u.role
-}
-
-func (u *User) SetName(name string) {
-	u.name = name
-}
-
-func (u *User) SetEmail(email string) {
-	u.email = email
-}
-
-func (u *User) SetPassword(password string) {
-	u.password = password
-}
-
-func (u *User) SetRole(role UserRole) {
-	u.role = role
 }

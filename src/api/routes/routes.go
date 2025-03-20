@@ -23,5 +23,5 @@ func (jr *JobRouter) CreateRoutes() {
 
 	v1 := api.Group("/v1")
 	v1.Get("/health", controller.Health)
-	v1.Get("/users", jr.UserController.UserService.UserRepository.Create) // TODO - Change method to POST
+	v1.Post("/users", jr.UserController.Create)
 }

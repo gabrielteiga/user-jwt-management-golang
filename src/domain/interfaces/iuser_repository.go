@@ -1,8 +1,9 @@
 package interfaces
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gabrielteiga/user-management-jwt/src/domain/entities"
+)
 
 type IUserRepository interface {
-	// TODO - remove c *fiber.Ctx and error return
-	Create(c *fiber.Ctx) error
+	Create(user *entities.User) error
 }
